@@ -168,35 +168,29 @@ def main():
         vidcap = cv2.VideoCapture('project_video.mp4')
         success,image = vidcap.read()
         success = True
-        vid = None
-        size=None
         try:
             while success:
                 success,image = vidcap.read()
                 print('Read a new frame: ', success)
                 image=np.float32(image)
                 render_deepdream(tf.square(T('mixed4c')), image)
-            for img in images:
-                if vid is None:
-                    if size is None:
-                        size = img.shape[1], img.shape[0]
-                        print(size)
-                    vid = VideoWriter("demo.avi",-1,30, size)
-                if size[0] != img.shape[1] and size[1] != img.shape[0]:
-                    img = resize(img, size)
-                vid.write(img)
-            vid.release()
+            save_video()
         except KeyboardInterrupt:
-            for img in images:
-                if vid is None:
-                    if size is None:
-                        size = img.shape[1], img.shape[0]
-                        print(size)
-                    vid = VideoWriter("demo.avi",-1,30, size)
-                if size[0] != img.shape[1] and size[1] != img.shape[0]:
-                    img = resize(img, size)
-                vid.write(img)
-            vid.release()
+            save_video()
+
+    def save_video():
+        vid = None
+        size=None
+        for img in images:
+            if vid is None:
+                if size is None:
+                    size = img.shape[1], img.shape[0]
+                    print(size)
+                vid = VideoWriter("demo.avi",-1,30, size)
+            if size[0] != img.shape[1] and size[1] != img.shape[0]:
+                img = resize(img, size)
+            vid.write(img)
+        vid.release()
 
    	#Step 3 - Pick a layer to enhance our image
     layer = 'mixed4d_3x3_bottleneck_pre_relu'
